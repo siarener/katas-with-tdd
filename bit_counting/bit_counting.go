@@ -7,20 +7,9 @@ Example: The binary representation of 1234 is 10011010010, so the function shoul
 package kata
 
 import (
-	"fmt"
-	"strconv"
+	"math/bits"
 )
 
-func CountBits(num uint) (int, error) {
-	bitRepresentation := fmt.Sprintf("%b", num)
-	var count int
-
-	for _, digit := range string(bitRepresentation) {
-		number, err := strconv.Atoi(string(digit))
-		if err != nil {
-			return 0, fmt.Errorf("error converting character to integer: %w", err)
-		}
-		count += int(number)
-	}
-	return count, nil
+func CountBits(num uint) int {
+	return bits.OnesCount(num)
 }
