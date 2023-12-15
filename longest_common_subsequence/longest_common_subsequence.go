@@ -1,5 +1,5 @@
 /*
-	https://www.codewars.com/kata/52756e5ad454534f220001ef/train/go
+https://www.codewars.com/kata/52756e5ad454534f220001ef/train/go
 
 Write a function called LCS that accepts two sequences and returns the longest subsequence common to the passed in sequences.
 Subsequence
@@ -59,57 +59,36 @@ type TmpLcs struct {
 	foundSubsequence string
 }
 
-func processLcsForSameEnding(tmpLcs TmpLcs) TmpLcs {
-	len1 := len(tmpLcs.s1)
-	len2 := len(tmpLcs.s2)
-
-	minLen := len1
-	if len2 < minLen {
-		minLen = len2
-	}
-
-	var idx int
-
-	for idx = 0; idx < minLen; idx++ {
-		if tmpLcs.s1[len1-1-idx] != tmpLcs.s2[len2-1-idx] {
-			break
-		}
-	}
-
-	return TmpLcs{
-		tmpLcs.s1[:len1-idx],
-		tmpLcs.s2[:len2-idx],
-		tmpLcs.s1[len1-idx:] + tmpLcs.foundSubsequence,
-	}
-}
-
-func processLcsForDifferentEnding(tmpLcs TmpLcs) TmpLcs {
-	option := computeLcs(TmpLcs{tmpLcs.s1[:len(tmpLcs.s1)-1], tmpLcs.s2, ""})
-	anotherOption := computeLcs(TmpLcs{tmpLcs.s1, tmpLcs.s2[:len(tmpLcs.s2)-1], ""})
-
-	if len(option.foundSubsequence) > len(anotherOption.foundSubsequence) {
-		option.foundSubsequence += tmpLcs.foundSubsequence
-		return option
-	} else {
-		anotherOption.foundSubsequence += tmpLcs.foundSubsequence
-		return anotherOption
-	}
-}
-
 func computeLcs(tmpLcs TmpLcs) TmpLcs {
 
 	for tmpLcs.s1 != "" && tmpLcs.s2 != "" {
-		if tmpLcs.s1[len(tmpLcs.s1)-1] == tmpLcs.s2[len(tmpLcs.s2)-1] {
+		lenS1 := len(tmpLcs.s1)
+		lenS2 := len(tmpLcs.s2)
+
+		if tmpLcs.s1[lenS1-1] == tmpLcs.s2[lenS2-1] {
 
 			/* use first property:
 			LCS(X^A,Y^A) = LCS(X,Y)^A, for all strings X, Y and all symbols A, where ^ denotes string concatenation. */
-			tmpLcs = processLcsForSameEnding(tmpLcs)
+			tmpLcs = TmpLcs{
+				tmpLcs.s1[:lenS1-1],
+				tmpLcs.s2[:lenS2-1],
+				string(tmpLcs.s1[lenS1-1]) + tmpLcs.foundSubsequence,
+			}
 
 		} else {
 			/* use second property:
 			If A and B are distinct symbols (A≠B), then LCS(X^A,Y^B) is one of the maximal-length strings in the set
 			{ LCS(X^A,Y), LCS(X,Y^B) }, for all strings X, Y.*/
-			tmpLcs = processLcsForDifferentEnding(tmpLcs)
+			optionA := computeLcs(TmpLcs{tmpLcs.s1[:lenS1-1], tmpLcs.s2, ""})
+			optionB := computeLcs(TmpLcs{tmpLcs.s1, tmpLcs.s2[:lenS2-1], ""})
+
+			if len(optionA.foundSubsequence) > len(optionB.foundSubsequence) {
+				optionA.foundSubsequence += tmpLcs.foundSubsequence
+				tmpLcs = optionA
+			} else {
+				optionB.foundSubsequence += tmpLcs.foundSubsequence
+				tmpLcs = optionB
+			}
 		}
 	}
 	return tmpLcs
