@@ -27,28 +27,22 @@ My tests include some extraordinarily high pyramids so as you can guess, brute-f
 package kata
 
 func LongestSlideDown(pyramid [][]int) int {
-	//currentPaths := [][]int{}
 	currentSums := []int{}
 
 	for i := len(pyramid) - 1; i >= 0; i-- {
-		//newPaths := [][]int{}
 		newSums := []int{}
 		for j := 0; j < len(pyramid[i]); j++ {
 			if len(currentSums) == 0 {
-				//newPaths = append(newPaths, []int{j})
 				newSums = append(newSums, pyramid[i][j])
 			} else {
 				if currentSums[j] > currentSums[j+1] {
-					//newPaths = append(newPaths, append(currentPaths[j], j))
 					newSums = append(newSums, currentSums[j]+pyramid[i][j])
 				} else {
-					//newPaths = append(newPaths, append(currentPaths[j+1], j))
 					newSums = append(newSums, currentSums[j+1]+pyramid[i][j])
 				}
 			}
 		}
 		currentSums = newSums
-		//currentPaths = newPaths
 	}
 	return currentSums[0]
 }
